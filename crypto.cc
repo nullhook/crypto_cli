@@ -39,7 +39,7 @@ json fetch(const char * url) {
   }
 }
 
-std::optional<std::string> lookup_id(json cache, std::string &symbol) {
+std::optional<std::string> lookup_id(const json &cache, const std::string &symbol) {
   for (auto it : cache) {
     auto data = it;
     if (data.at("symbol") == symbol) {
@@ -51,17 +51,16 @@ std::optional<std::string> lookup_id(json cache, std::string &symbol) {
 }
 
 // TODO: need better decimal library
-void lookup_and_update_price(asset *asset) {
-  auto url = "https://api.coincap.io/v2/assets/" + asset->id;
+void lookup_and_update_price(asset &asset) {
+  auto url = "https://api.coincap.io/v2/assets/" + asset.id;
   json res = fetch(url.c_str());
   std::string price_str = res.at("priceUsd");
   auto price = std::stold(price_str); // long double is platform dependent
   dec::decimal<2> dec_price{price}; // parses total 18 digits. the price string on api is 20 digits which overflows an integer perhaps
-  asset->price = dec_price;
+  asset.price = dec_price;
 }
 
 int main(int argc, char** argv) {
-
   std::string input = "";
   dec::decimal_format format{'.', ','};
   std::string url = "https://api.coincap.io/v2/assets/";
@@ -86,7 +85,7 @@ int main(int argc, char** argv) {
       continue;
     }
 
-    lookup_and_update_price(&current_asset);
+    lookup_and_update_price(current_asset);
     std::cout << dec::toString(current_asset.price, format) << "\n";
   }
 
