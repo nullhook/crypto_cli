@@ -1,7 +1,6 @@
 #include <iostream>
 #include <curl/curl.h>
 #include <string>
-#include <iomanip>
 #include <optional>
 #include <algorithm>
 #include "includes/json.hpp"
@@ -66,11 +65,10 @@ int main(int argc, char** argv) {
   std::string url = "https://api.coincap.io/v2/assets/";
   std::cout << "Fetching all crypto assets..." << std::endl;
   json assets_cache = fetch(url.c_str());
-
+  
   while(input != "exit") {
     std::cout << "[KRYPT]: ";
     std::cin >> input;
-    
 
     std::transform(input.begin(), input.end(), input.begin(),
     [](auto input) {return std::toupper(input); });
